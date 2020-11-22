@@ -25,9 +25,13 @@ func build(source_file, options):
 		
 		#...nope, we're ded.
 		if response.code == model.IMPORT_RETURN.ERROR:
+			file.close()
 			print("IMPORT ERROR: %s" % response.message)
 			return FAILED
 		
+		
+	# Actually close the darn thing
+	file.close()
 		
 	# Setup our new scene
 	var scene = PackedScene.new()
