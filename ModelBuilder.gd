@@ -14,6 +14,10 @@ func build(source_file, options):
 	var path = "%s/Models" % self.get_script().get_path().get_base_dir()
 	var abc_file = load("%s/ABC.gd" % path)
 	var abc6_file = load("%s/ABC6.gd" % path)
+	
+	# Our helper script
+	var abc_helper_script = load("%s/ABCHelper.gd" % self.get_script().get_path().get_base_dir())
+	
 	var model = abc_file.ABC.new()
 	
 	var response = model.read(file)
@@ -41,6 +45,8 @@ func build(source_file, options):
 	
 	# Setup the nodes
 	root.name = "Root"
+	
+	root.set_script(abc_helper_script)
 	
 	var skeleton = Skeleton.new()
 	skeleton = build_skeleton(model, skeleton)
@@ -197,6 +203,15 @@ func process_animations(model, anim_player : AnimationPlayer):
 			# End If
 			self.recursively_apply_transform(model, 0, kfi, lt_anim, anim, scaled_key, Transform.IDENTITY)
 			last_scaled_key = scaled_key
+
+			# Check for command string...
+			if lt_keyframe.command_string != "":
+				var key = "." # Root
+				var track_id = anim.add_track(Animation.TYPE_METHOD)
+				anim.track_set_path(track_id, key)
+				anim.track_insert_key(track_id, scaled_key, {"method": "run_command_string", "args": [ lt_keyframe.command_string ]})
+			# End If	
+
 		# End For
 		
 		anim.length = last_scaled_key
