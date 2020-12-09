@@ -49,6 +49,7 @@ func build(source_file, options):
 	root.set_script(abc_helper_script)
 	
 	var skeleton = Skeleton.new()
+	skeleton.name = "Skeleton"
 	skeleton = build_skeleton(model, skeleton)
 	root.add_child(skeleton)
 	skeleton.owner = root
@@ -70,6 +71,7 @@ func build(source_file, options):
 	
 	# Animation time!
 	var anim_player = AnimationPlayer.new()
+	anim_player.name = "AnimPlayer"
 	root.add_child(anim_player)
 	anim_player.owner = root
 	anim_player = process_animations(model, anim_player)
@@ -186,7 +188,6 @@ func process_animations(model, anim_player : AnimationPlayer):
 	
 	for lt_anim in model.animations:
 		var anim = Animation.new()
-		
 		# Pre-make our track ids
 		for ni in range(model.node_count):
 			var key = "Skeleton:%s" % model.nodes[ni].name

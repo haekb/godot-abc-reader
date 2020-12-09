@@ -113,6 +113,14 @@ class ABC:
 		return { 'code': code, 'message': message }
 	# End Func
 	
+	# .get_8() reads in the value as an unsigned char
+	# For certain bits of data we want a signed char!
+	func read_signed_char(file : File):
+		var value = file.get_8()
+		if value > 127:
+			value -= 256
+		return value
+	
 	func read_string(file : File):
 		var length = file.get_16()
 		return file.get_buffer(length).get_string_from_ascii()
@@ -272,6 +280,8 @@ class ABC:
 		# End Func
 	# End FaceVertex
 	
+
+	
 	class Vertex:
 		var sublod_vertex_index = 0xCDCD
 		var vertex_replacements = [0, 0]
@@ -281,8 +291,14 @@ class ABC:
 		var normal = Vector3()
 		
 		func read(abc : ABC, f : File):
+			
 			self.location = abc.read_vector3(f)
-			self.normal = Vector3(f.get_8(), f.get_8(), f.get_8())
+			
+			# Normals have to be read as a signed char!!
+			self.normal = Vector3(abc.read_signed_char(f), abc.read_signed_char(f), abc.read_signed_char(f)) 
+
+			# Normalize it to 128
+			self.normal /= 128
 			
 			weight_count = 1
 			var weight = abc.Weight.new()
