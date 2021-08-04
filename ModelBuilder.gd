@@ -79,6 +79,9 @@ func build(source_file, options):
 	# Pack our scene!
 	scene.pack(root)
 	
+	# Clean up!
+	root.queue_free()
+	
 	return scene
 
 func fill_array_mesh(model):
